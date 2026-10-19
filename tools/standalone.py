@@ -14,7 +14,13 @@ page = open(page_path, encoding='utf8').read()
 links='\n'.join(l for l in page.split('\n') if l.startswith('<link'))
 page='\n'.join(l for l in page.split('\n') if not l.startswith('<link'))
 d3=open(d3_path,encoding='utf8').read()
-stamp=datetime.now().strftime('%d/%m/%Y %H:%M')
+DIAS=['lunes','martes','miércoles','jueves','viernes','sábado','domingo']
+MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']
+_f=max((r.get('fecha') or '') for r in data.get('cierres_caja',[{'fecha':''}]))
+if _f:
+    _d=datetime.strptime(_f,'%Y-%m-%d'); stamp=f"{DIAS[_d.weekday()]} {_d.day} de {MESES[_d.month-1]} de {_d.year}"
+else:
+    stamp=datetime.now().strftime('%d/%m/%Y')
 shim='''<script>
 window.__TOBE_DATA__ = %s;
 (function(){
@@ -59,10 +65,11 @@ html=f'''<!doctype html>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Lora:ital@0;1&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 {tokens}
 </head><body><div id="dash-root">
+<p class="app-stamp" style="max-width:1180px;margin:0 auto 8px;color:var(--color-fg-muted);font-size:13px;text-align:right">Actualizado hasta el <strong style="color:var(--color-fg)">{stamp}</strong></p>
 <script>{d3}</script>
 {shim}
 {page}
-<p class="app-foot">Datos actualizados el {stamp}</p>
+<p class="app-foot">Actualizado hasta el {stamp}</p>
 </div></body></html>'''
 open(out,'w',encoding='utf8').write(html)
 print('OK',len(html))
