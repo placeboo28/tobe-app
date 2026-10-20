@@ -14,6 +14,12 @@ page = open(page_path, encoding='utf8').read()
 links='\n'.join(l for l in page.split('\n') if l.startswith('<link'))
 page='\n'.join(l for l in page.split('\n') if not l.startswith('<link'))
 d3=open(d3_path,encoding='utf8').read()
+# Imágenes guardadas como /_blob/<id> en el panel: se incrustan desde <carpeta_datos>/../blobs/<id>.<ext> si existen
+import base64, mimetypes
+_bd=os.path.join(os.path.dirname(os.path.abspath(data_dir)),'blobs')
+for _f in glob.glob(os.path.join(_bd,'*')):
+    _id=os.path.splitext(os.path.basename(_f))[0]; _mt=mimetypes.guess_type(_f)[0] or 'application/octet-stream'
+    page=page.replace('/_blob/'+_id,'data:%s;base64,%s'%(_mt,base64.b64encode(open(_f,'rb').read()).decode()))
 DIAS=['lunes','martes','miércoles','jueves','viernes','sábado','domingo']
 MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre']
 _f=max((r.get('fecha') or '') for r in data.get('cierres_caja',[{'fecha':''}]))
