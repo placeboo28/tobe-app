@@ -1,5 +1,5 @@
 // TO BE — service worker: red primero (datos siempre al día), caché si no hay conexión
-const CACHE = 'tobe-202610202321';
+const CACHE = 'tobe-202610211126';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))); self.clients.claim(); });
