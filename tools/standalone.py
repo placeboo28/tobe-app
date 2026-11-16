@@ -77,5 +77,11 @@ html=f'''<!doctype html>
 {page}
 <p class="app-foot">Actualizado hasta el {stamp}</p>
 </div></body></html>'''
+import base64 as _b64, re as _re, os as _os
+_ad=_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),'assets')
+def _emb(m):
+    f=_os.path.join(_ad,m.group(1)+'.pdf')
+    return 'href="data:application/pdf;base64,'+_b64.b64encode(open(f,'rb').read()).decode()+'"' if _os.path.exists(f) else m.group(0)
+html=_re.sub(r'href="/_blob/([0-9a-f]{32})"',_emb,html)
 open(out,'w',encoding='utf8').write(html)
 print('OK',len(html))
